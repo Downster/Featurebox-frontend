@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form"
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { tokenFetch } from "@/utils/tokenFetch";
+import { TextField } from "./Fields";
 
 const schema = yup.object({
     name: yup.string()
@@ -16,14 +18,27 @@ const schema = yup.object({
         .min(3, "Message must be at least 3 characters")
         .max(400, "Message must be less than 400 characters"),
     file: yup.mixed().required("You must upload a file")
-        .test()
 })
 
 export default function ImageUploadForm() {
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
-    const onSubmit = data => console.log(data);
+    const onSubmit = async (data) => {
+        const formData = new FormData()
+        formData.append('name', data.name);
+        formData.append('description', data.description);
+        formData.append('owner', 'poppy')
+        formData.append('message', data.message);
+        formData.append('file', data.file[0])
+        const res = await tokenFetch('/api/images', {
+            method: "POST",
+            body: formData
+        }
+        )
+        const info = await res.json()
+        console.log(info)
+    }
     return (
         <>
             <div>

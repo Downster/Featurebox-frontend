@@ -17,6 +17,7 @@ function Label({ id, children }) {
 export function TextField({
   id,
   label,
+  register,
   type = 'text',
   className = '',
   ...props
@@ -24,7 +25,7 @@ export function TextField({
   return (
     <div className={className}>
       {label && <Label id={id}>{label}</Label>}
-      <input id={id} type={type} {...props} className={formClasses} />
+      <input id={id} type={type} {...register(id)} {...props} className={formClasses} />
     </div>
   )
 }

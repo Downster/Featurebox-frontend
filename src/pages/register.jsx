@@ -3,10 +3,60 @@ import Link from 'next/link'
 
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
-import { SelectField, TextField } from '@/components/Fields'
+import { TextField } from '@/components/Fields'
 import { Logo } from '@/components/Logo'
+import { useForm } from "react-hook-form"
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+import { tokenFetch } from "@/utils/tokenFetch";
+import { setCookie } from 'cookies-next'
+
+const schema = yup.object({
+  first_name: yup.string()
+    .required()
+    .min(3, "First name must be a minimum of 3 characters")
+    .max(20, "First name can be at most 20 characters"),
+  last_name: yup.string()
+    .required()
+    .min(3, "Last name must be at least 3 characters")
+    .max(400, "Last name must be less than 400 characters"),
+  email: yup.string()
+    .required()
+    .email("Must be a valid email"),
+  password: yup.string()
+    .required()
+    .min(8, "Password must be 8 characters minimum")
+})
 
 export default function Register() {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema)
+  });
+
+  const onSubmit = async (data) => {
+
+    const res = await tokenFetch('/api/users', {
+      method: "POST",
+      body: JSON.stringify({
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        password: data.password
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+    )
+    const token = await res.json()
+    if ("Authorization" in token) {
+      setCookie("Authorization", token.Authorization)
+      //todo redirect to protected area
+    } else {
+      //errors
+    }
+
+  }
   return (
     <>
       <Head>
@@ -34,54 +84,50 @@ export default function Register() {
           </div>
         </div>
         <form
-          action="#"
-          className="mt-10 grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2"
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             label="First name"
             id="first_name"
+            register={register}
             name="first_name"
             type="text"
             autoComplete="given-name"
             required
           />
+          <p>{errors.first_name?.message}</p>
           <TextField
             label="Last name"
             id="last_name"
+            register={register}
             name="last_name"
             type="text"
             autoComplete="family-name"
             required
           />
+          <p>{errors.last_name?.message}</p>
           <TextField
             className="col-span-full"
             label="Email address"
             id="email"
+            register={register}
             name="email"
             type="email"
             autoComplete="email"
             required
           />
+          <p>{errors.email?.message}</p>
           <TextField
             className="col-span-full"
             label="Password"
             id="password"
+            register={register}
             name="password"
             type="password"
             autoComplete="new-password"
             required
           />
-          <SelectField
-            className="col-span-full"
-            label="How did you hear about us?"
-            id="referral_source"
-            name="referral_source"
-          >
-            <option>AltaVista search</option>
-            <option>Super Bowl commercial</option>
-            <option>Our route 34 city bus ad</option>
-            <option>The “Never Use This” podcast</option>
-          </SelectField>
+          <p>{errors.password?.message}</p>
           <div className="col-span-full">
             <Button
               type="submit"
