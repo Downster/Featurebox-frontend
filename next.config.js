@@ -6,14 +6,18 @@ const nextConfig = {
     newNextLinkBehavior: true,
     scrollRestoration: true,
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       // source: '/api/:path*',
-  //       // destination: 'http://localhost:8080/api/:path*' // Proxy to Backend
-  //     }
-  //   ]
-  // }
+  async rewrites() {
+    return [
+      {
+        source: '/api/csrf',
+        destination: 'http://localhost:8080/api/csrf' // Proxy to Backend
+      },
+      {
+        source: '/api/users',
+        destination: 'http://localhost:8080/api/users'
+      }
+    ]
+  }
 }
 
 

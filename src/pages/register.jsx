@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { tokenFetch } from "@/utils/tokenFetch";
 import { setCookie } from 'cookies-next'
+import { useSession } from 'next-auth/react'
 
 const schema = yup.object({
   first_name: yup.string()
@@ -29,6 +30,8 @@ const schema = yup.object({
 })
 
 export default function Register() {
+  const { data: session } = useSession()
+  console.log(session)
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });

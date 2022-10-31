@@ -11,8 +11,6 @@ import { SecondaryFeatures } from '@/components/SecondaryFeatures'
 import { Testimonials } from '@/components/Testimonials'
 
 export default function Home() {
-  //fetch csrf from backend
-  fetch("/api/csrf")
   return (
     <>
       <Head>
