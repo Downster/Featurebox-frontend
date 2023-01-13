@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { tokenFetch } from "@/utils/tokenFetch";
 import { setCookie } from 'cookies-next'
 import { useSession } from 'next-auth/react'
+import { signIn } from "next-auth/react"
 
 const schema = yup.object({
   first_name: yup.string()
@@ -38,7 +39,7 @@ export default function Register() {
 
   const onSubmit = async (data) => {
 
-    const res = await tokenFetch('/api/users', {
+    const res = await fetch('/api/users', {
       method: "POST",
       body: JSON.stringify({
         firstName: data.first_name,
@@ -53,8 +54,9 @@ export default function Register() {
     )
     const token = await res.json()
     if ("Authorization" in token) {
-      setCookie("Authorization", token.Authorization)
-      //todo redirect to protected area
+      // todo redirect to user dashboard
+      signIn('credentials', { callbackUrl: '/', email: data.email, password: data.password })
+    
     } else {
       //errors
     }
