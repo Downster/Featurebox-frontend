@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { tokenFetch } from "@/utils/tokenFetch";
-import { TextField } from "./Fields";
+import { useSession } from "next-auth/react";
 
 const schema = yup.object({
     name: yup.string()
@@ -21,6 +21,8 @@ const schema = yup.object({
 })
 
 export default function ImageUploadForm() {
+    const { data: session } = useSession()
+    console.log(session)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
@@ -31,13 +33,16 @@ export default function ImageUploadForm() {
         formData.append('owner', 'poppy')
         formData.append('message', data.message);
         formData.append('file', data.file[0])
-        const res = await tokenFetch('/api/images', {
+        const res = await fetch('/api/images', {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: new Headers({
+                'Authorization': session.accessToken, 
+            })
         }
         )
-        const info = await res.json()
-        console.log(info)
+        console.log(res)
+        
     }
     return (
         <>

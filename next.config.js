@@ -9,12 +9,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/csrf',
-        destination: 'http://localhost:8080/api/csrf' // Proxy to Backend
-      },
-      {
         source: '/api/users',
         destination: 'http://localhost:8080/api/users'
+      },
+      {
+        source: "/api/images",
+        destination: 'http://localhost:8080/api/images'
       }
     ]
   }
