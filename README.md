@@ -4,12 +4,12 @@ Salient is a [Tailwind UI](https://tailwindui.com) site template built using [Ta
 
 ## Getting started
 
-To get started with this template, first install the npm dependencies:
-
-```bash
+To get started with this template, first install the npm dependencies:sss
+dssadds
+```bashsddsadas
 npm install
 ```
-
+dssda
 Next, run the development server:
 
 ```bash
